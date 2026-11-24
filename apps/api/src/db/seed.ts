@@ -42,9 +42,7 @@ export async function seedCurriculum(database: Database, curriculum: CurriculumD
 
     // Topics removed from the file are removed from the database too (their links cascade).
     // Once attempts reference topics, this will need a softer approach (archive, not delete).
-    await tx
-      .delete(topics)
-      .where(and(eq(topics.subjectId, subject.id), notInArray(topics.slug, [...idBySlug.keys()])));
+    await tx.delete(topics).where(and(eq(topics.subjectId, subject.id), notInArray(topics.slug, [...idBySlug.keys()])));
 
     // Prerequisites are replaced wholesale, so links removed from the file disappear too.
     await tx.delete(topicPrerequisites).where(inArray(topicPrerequisites.topicId, [...idBySlug.values()]));

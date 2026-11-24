@@ -13,7 +13,12 @@ async function counts() {
   const linkRows = await db
     .select()
     .from(topicPrerequisites)
-    .where(inArray(topicPrerequisites.topicId, topicRows.map((r) => r.id)));
+    .where(
+      inArray(
+        topicPrerequisites.topicId,
+        topicRows.map((r) => r.id),
+      ),
+    );
   return { topics: topicRows.length, links: linkRows.length };
 }
 

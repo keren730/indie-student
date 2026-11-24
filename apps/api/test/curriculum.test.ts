@@ -53,22 +53,14 @@ describe('validateCurriculum', () => {
 
   it('rejects a prerequisite cycle across several topics', () => {
     const errors = validateCurriculum(
-      curriculumWith([
-        topic('a', { prerequisites: ['c'] }),
-        topic('b', { prerequisites: ['a'] }),
-        topic('c', { prerequisites: ['b'] }),
-      ]),
+      curriculumWith([topic('a', { prerequisites: ['c'] }), topic('b', { prerequisites: ['a'] }), topic('c', { prerequisites: ['b'] })]),
     );
     expect(errors).toHaveLength(1);
     expect(errors[0]).toContain('Prerequisite cycle');
   });
 
   it('allows a topic needed by two others (not a cycle)', () => {
-    const c = curriculumWith([
-      topic('base'),
-      topic('x', { prerequisites: ['base'] }),
-      topic('y', { prerequisites: ['base', 'x'] }),
-    ]);
+    const c = curriculumWith([topic('base'), topic('x', { prerequisites: ['base'] }), topic('y', { prerequisites: ['base', 'x'] })]);
     expect(validateCurriculum(c)).toEqual([]);
   });
 });

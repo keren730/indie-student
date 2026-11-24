@@ -1,10 +1,22 @@
 {
   "name": "indie-student",
   "private": true,
-  "workspaces": ["apps/*"],
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w apps/api",
     "test": "npm test -w apps/api",
-    "typecheck": "npm run typecheck -w apps/api"
+    "typecheck": "npm run typecheck -w apps/api",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.10.1",
+    "typescript-eslint": "^8.74.0"
   }
 }

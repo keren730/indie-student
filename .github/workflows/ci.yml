@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    # A real Postgres for the tests, the same major version as local development.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app_dev_password
+          POSTGRES_DB: indie_student
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d indie_student"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Local-only values, the same ones used for development.
+      - run: cp .env.example .env
+
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+
+      - name: Apply database migrations
+        run: npm run db:migrate -w apps/api
+
+      - run: npm test
