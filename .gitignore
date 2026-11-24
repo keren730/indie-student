@@ -3,3 +3,6 @@ dist
 .env
 .DS_Store
 coverage
+
+# Private learning notes (not part of the public repo)
+notes/
