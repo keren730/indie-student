@@ -45,4 +45,21 @@ describe('GET /topics', () => {
     const concept = topics.find((t) => t.slug === 'fractions-concept');
     expect(concept?.prerequisites).toEqual([]);
   });
+
+  it('returns an empty list with ?grade=5', async () => {
+    const res = await app.inject({ method: 'GET', url: '/topics?grade=5' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().topics).toHaveLength(0);
+  });
+
+  it('returns all grade 4 topics with ?grade=4', async () => {
+    const res = await app.inject({ method: 'GET', url: '/topics?grade=4' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().topics).toHaveLength(27);
+  });
+
+  it.each(['abc', '4.5', '0', '13', ''])('returns 400 for invalid ?grade=%s', async (value) => {
+    const res = await app.inject({ method: 'GET', url: `/topics?grade=${value}` });
+    expect(res.statusCode).toBe(400);
+  });
 });
