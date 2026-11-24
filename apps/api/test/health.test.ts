@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { buildApp } from '../src/app.js';
+import { db } from '../src/db/client.js';
 
 describe('GET /health', () => {
   it('returns 200 and { status: "ok" }', async () => {
-    const app = buildApp();
+    const app = buildApp({ db });
     const res = await app.inject({ method: 'GET', url: '/health' });
     expect(res.statusCode).toBe(200);
     expect(res.json()).toEqual({ status: 'ok' });

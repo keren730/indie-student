@@ -9,3 +9,5 @@ if (!connectionString) {
 // One pool for the whole process: connections are reused, not opened per request.
 export const pool = new pg.Pool({ connectionString });
 export const db = drizzle(pool);
+
+export type Database = typeof db;
