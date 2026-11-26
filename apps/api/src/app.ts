@@ -1,5 +1,7 @@
 import Fastify from 'fastify';
 import type { Database } from './db/client.js';
+import cookie from '@fastify/cookie';
+import { authRoutes } from './routes/auth.js';
 import { topicRoutes } from './routes/topics.js';
 
 export interface AppDependencies {
@@ -15,6 +17,8 @@ export function buildApp({ db }: AppDependencies) {
     return { status: 'ok' };
   });
 
+  app.register(cookie);
+  app.register(authRoutes, { db });
   app.register(topicRoutes, { db });
 
   return app;

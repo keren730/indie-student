@@ -26,6 +26,21 @@ export const users = pgTable(
   (table) => [index('users_family_id_idx').on(table.familyId)],
 );
 
+// A login session. `id` is the SHA-256 hash of the random token kept in the browser cookie,
+// so a leaked database dump does not contain usable session tokens.
+export const sessions = pgTable(
+  'sessions',
+  {
+    id: text('id').primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('sessions_user_id_idx').on(table.userId)],
+);
+
 // A school subject. Math today; English or Grammar later are just more rows.
 export const subjects = pgTable('subjects', {
   id: uuid('id').primaryKey().defaultRandom(),
