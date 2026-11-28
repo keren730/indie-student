@@ -57,10 +57,15 @@ export async function login(database: Database, emailInput: string, password: st
   const ok = await argon2.verify(user?.passwordHash ?? dummyHash, password);
   if (!user || !ok) return null;
 
+  return createSession(database, user.id);
+}
+
+// Creates a session for a user and returns the token that goes in the cookie.
+export async function createSession(database: Database, userId: string): Promise<string> {
   const token = randomBytes(32).toString('base64url');
   await database.insert(sessions).values({
     id: hashToken(token),
-    userId: user.id,
+    userId,
     expiresAt: new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000),
   });
   return token;

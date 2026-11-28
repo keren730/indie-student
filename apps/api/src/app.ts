@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import type { Database } from './db/client.js';
 import cookie from '@fastify/cookie';
 import { authRoutes } from './routes/auth.js';
+import { familyRoutes } from './routes/family.js';
 import { topicRoutes } from './routes/topics.js';
 
 export interface AppDependencies {
@@ -19,6 +20,7 @@ export function buildApp({ db }: AppDependencies) {
 
   app.register(cookie);
   app.register(authRoutes, { db });
+  app.register(familyRoutes, { db });
   app.register(topicRoutes, { db });
 
   return app;

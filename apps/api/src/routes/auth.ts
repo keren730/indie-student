@@ -1,8 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify';
+import { SESSION_COOKIE, currentUser, requireUser } from '../auth/require-user.js';
 import type { Database } from '../db/client.js';
 import { EmailTakenError, getUserByToken, login, logout, registerFamily } from '../services/auth.js';
-
-export const SESSION_COOKIE = 'session';
 
 const cookieOptions = {
   httpOnly: true, // browser JavaScript cannot read it, which limits the damage of an XSS bug
@@ -64,11 +63,8 @@ export async function authRoutes(app: FastifyInstance, options: { db: Database }
     return reply.clearCookie(SESSION_COOKIE, { path: '/' }).code(204).send();
   });
 
-  app.get('/auth/me', async (request, reply) => {
-    const token = readToken(request);
-    const user = token ? await getUserByToken(db, token) : null;
-    if (!user) return reply.code(401).send({ error: 'Not logged in' });
-    return { user };
+  app.get('/auth/me', { preHandler: requireUser(db) }, async (request) => {
+    return { user: currentUser(request) };
   });
 }
 
